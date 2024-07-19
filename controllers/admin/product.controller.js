@@ -160,9 +160,9 @@ module.exports.createPost = async (req, res) => {
     } else {
         req.body.position = parseInt(req.body.position); //nếu người ta chuyền vào thì chuyển dạng từ string sang number
     }
-    if (req.file) { // kiểm tra xem đã đưa ảnh vào chưa rồi ms chạy
-        req.body.thambnail = `/uploads/${req.file.filename}`; //lưu thêm link ảnh vào database;req.file.filename là id ramdom của ảnh
-    }
+    // if (req.file) { // kiểm tra xem đã đưa ảnh vào chưa rồi ms chạy
+    //     req.body.thambnail = `/uploads/${req.file.filename}`; //lưu thêm link ảnh vào database;req.file.filename là id ramdom của ảnh
+    // }
     const product = new Product(req.body); // đây là cú pháp tạo mới 1 sản phẩm sao lưu key value của object req.body đã nhập vào sang 1 product mới
     await product.save(); //lưu dữ liệu product vừa tạo ra vào database
 
@@ -200,9 +200,9 @@ module.exports.editPatch = async (req, res) => {//tương tự creatPost nên kh
     req.body.stock = parseInt(req.body.stock) // chuyển từ string về dạng number
     req.body.position = parseInt(req.body.position); //nếu người ta chuyền vào thì chuyển dạng từ string sang number
 
-    if (req.file) { // kiểm tra xem đã đưa ảnh vào chưa rồi ms chạy
-        req.body.thambnail = `/uploads/${req.file.filename}`; //lưu thêm link ảnh vào database;req.file.filename là id ramdom của ảnh
-    }
+    // if (req.file) { // kiểm tra xem đã đưa ảnh vào chưa rồi ms chạy
+    //     req.body.thambnail = `/uploads/${req.file.filename}`; //đường dẫn local lưu thêm link ảnh vào database;req.file.filename là id ramdom của ảnh
+    // }
     try {
         await Product.updateOne({id:id},req.body);//ở đây update tất cả req.body
         req.flash("error","Cập nhật thành công");
