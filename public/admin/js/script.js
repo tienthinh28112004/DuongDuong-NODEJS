@@ -160,3 +160,41 @@ if(uploadImage){
         }
     });
 }
+//End Upload Page
+
+//Sort
+const sort=document.querySelector("[sort]");
+if(sort){
+    let url=new URL(window.location.href);// js có hàm new URL() để sử dụng
+
+    const sortSelect = sort.querySelector("[sort-select]");
+    const sortClear = sort.querySelector("[sort-clear]");
+    //Sắp xếp
+    sortSelect.addEventListener("change",(e)=>{
+        const value= e.target.value; //cái này chính là option nó chọn
+        const [sortKey,sortValue]=value.split("-");//sử dụng phá vỡ cấu trúc
+
+        url.searchParams.set("sortKey",sortKey);//đưa sortKey=sortKey lên url (set up)
+        url.searchParams.set("sortValue",sortValue)
+
+        window.location.href=url.href;//đưa lên url(đi đến trang khác)
+    });
+    //Xóa sắp xếp
+    sortClear.addEventListener("click",()=>{
+        url.searchParams.delete("sortkey");
+        url.searchParams.delete("sortValue");
+        window.location.href=url.href;//đưa lên url(đi đến trang khác)
+    });
+
+    //Thêm selected cho option(khi chọn option nào thì nó sẽ hiện ngay trong ô bảng)
+    const sortKey = url.searchParams.get("sortkey");//lấy dữ liệu trên params
+    const sortValue = url.searchParams.get("sortValue");//lấy luôn dữ liệu trên url luôn
+
+    if(sortKey && sortValue){
+        const stringSort = `${sortKey}-${sortValue}`;
+        const optionSelected = sortSelect.querySelector(`option[value='${stringSort}']`);
+        optionSelected.selected = true;//do selected là thuộc tính mặc định nên gán luôn không cần setattribute nữa
+    }
+
+}
+//End Sort

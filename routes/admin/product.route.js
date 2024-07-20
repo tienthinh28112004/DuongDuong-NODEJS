@@ -26,7 +26,7 @@ router.get("/create", controller.create); //đi vào route /create  khi bấm v�
 router.post(
     "/create",
     upload.single("thumbnail"), //upload singe ở đây là upload 1 ảnh vào,và lưu ảnh ở trường thmbnail
-    uploadCloud.upload,
+    uploadCloud.upload,//hàm upload online
     validate.createPost, //đây gọi là midlewhere hàm trung gian nó sẽ check hàm trên đúng chưa nếu đúng rồi nó sẽ trả về next() để xuống dòng phía dưới,còn nếu không thì code ngừng luôn
     controller.createPost // cũng đi vào route /create nhưng phương thức khác khi vào trang create bằng phương thức get rồi thì khi tạo mới sẽ dùng đến phương thức post,
   );
@@ -36,6 +36,7 @@ router.get("/edit/:id", controller.edit); //id ở đây là route động,đang
 router.patch( //thắc mắc đọc ở phương thức post ở create phái trên
   "/edit/:id",
   upload.single("thumbnail"), //upload singe ở đây là upload 1 ảnh vào,và lưu ảnh ở trường thmbnail
+  uploadCloud.upload,//hàm upload online
   validate.createPost,
   controller.editPatch
 );

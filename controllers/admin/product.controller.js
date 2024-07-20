@@ -40,9 +40,18 @@ module.exports.index = async (req, res) => {
         countProducts
     );
     //end pagination:hết phân trang
-    const products = await Product.find(find).sort({
-        position: "desc" //có hàm tên sort dùng để sắp xếp vị trí(sắp xếp giảm dần là desc còn sắp xếp tăng dần là asc)
-    }).limit(objectPagination.limitItem).skip(objectPagination.skip); //dựa vào hàm let find(object) để tìm các giá trị phù hợp,[.limit(4) tức là chỉ lấy 4 sản phẩm đầu tiên(có thể không limit cũng được)],[ship(4) tức là bỏ qua 4 sản phẩm đầu]
+
+    //Sort
+    let sort={};
+    if(req.query.sortKey && req.query.sortValue){//kiểm tra trên url có truyền sortkey hay sortvalue vào không
+        sort[req.query.sortKey] = req.query.sortValue;//truyền string thì phải có ngoặc vuông không thì làm như này cũng được req.price=req.query.sortValue
+    }else{
+        //nếu url không có sortkey hay sortvalue thì làm theo mặc định
+        sort.position="desc";//mặc định position ban đầu là desc nếu nó không thay đổi gì thì trả về giảm dần
+    }
+
+    //End Sort
+    const products = await Product.find(find).sort(sort).limit(objectPagination.limitItem).skip(objectPagination.skip); //dựa vào hàm let find(object) để tìm các giá trị phù hợp,[.limit(4) tức là chỉ lấy 4 sản phẩm đầu tiên(có thể không limit cũng được)],[ship(4) tức là bỏ qua 4 sản phẩm đầu]
     //console.log(products);
     res.render("admin/pages/products/index", {
         //khi dùng render thì nó tự động vào views

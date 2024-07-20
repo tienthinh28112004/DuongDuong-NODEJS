@@ -1,4 +1,4 @@
-const cloudinary = require('cloudinary').v2;
+const cloudinary = require('cloudinary').v2;//do trang này dùng nên khai báo ở trong này,nếu file khác uốn dùng file ày thì vẫn dc
 const streamifier = require('streamifier');
 
 //Cloudinary
