@@ -50,3 +50,39 @@ module.exports.createPost = async (req, res) => {
 
     res.redirect(`${systemConfig.prefixAdmin}/products-category`); // sau khi xong chạy đến trang khác
 }
+
+//[GET] /admin/products-category/edit/:id(lấy dữ liệu để trả ra trang)
+module.exports.edit = async (req, res) => {
+    try {//nếu tìm được danh mục đó thì mới in ra giao diện còn không thì link sang trang khác
+        const id=req.params.id;
+
+        const data=await ProductCategory.findOne({
+            _id: id,
+            deleted: false
+        });
+
+        const records = await ProductCategory.find({deleted:false});//tìm các cha để lựa chọn
+
+        const newRecords = createTreeHelper.tree(records);//hàm này dùng đệ quy để tìm các con cho bố(không hiểu vào helper xem lại)
+
+        res.render("admin/pages/products-category/edit", {
+            //khi dùng render thì nó tự động vào views
+            pageTitle: "Chỉnh sửa danh mục sản phẩm",
+            data: data,
+            records:newRecords
+        });
+    } catch (error) {//nếu không tìm được thì về trang danh mục sản phẩm
+        res.redirect(`${systemConfig.prefixAdmin}/products-category`);
+    }
+};
+
+//[PATCH] /admin/products-category/edit/:id (đưa dữ liệu đã sửa ở trên vào database rồi đi đến trang)
+module.exports.editPatch = async (req, res) => {
+    const id=req.params.id;
+
+    req.body.position = parseInt(req.body.position);
+
+    await ProductCategory.updateOne({_id: id},req.body);//update mới toàn bộ bản ghi
+
+    res.redirect("back");//sau khi update xong thì trả lại trang
+};

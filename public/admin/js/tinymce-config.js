@@ -1,7 +1,7 @@
 tinymce.init({//hàm giúp định dạng các kiểu chữ(chữ nghiêng chữ thẳng)
   selector: 'textarea.textarea-mce',//(chọn những thẻ textarea có class là textarea-mce)tìm đến các thẻ textarea có class là textarea-mce
   plugins: "image", //dùng plugin để upload ảnh
-  file_picker_callback: function (cb,value,meta){// hàm có sẵn để có thể đưa ảnh nên trong tinymce
+  file_picker_callback: function (cb,value,meta){// hàm có sẵn để có thể đưa ảnh nên khu chi tiết trong tinymce
     var input = document.createElement('input');
     input.setAttribute('type','file');
     input.setAttribute('accept','image/*');

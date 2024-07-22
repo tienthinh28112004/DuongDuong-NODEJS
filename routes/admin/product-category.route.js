@@ -12,7 +12,7 @@ const uploadCloud= require("../../middlewares/admin/uploadCloud.middleware");
 
 router.get("/", controller.index);
 
-router.get("/create",controller.create)
+router.get("/create",controller.create);
 
 router.post(
     "/create",
@@ -20,6 +20,16 @@ router.post(
     uploadCloud.upload,//hàm upload online
     validate.createPost, //đây gọi là midlewhere hàm trung gian nó sẽ check hàm trên đúng chưa nếu đúng rồi nó sẽ trả về next() để xuống dòng phía dưới,còn nếu không thì code ngừng luôn
     controller.createPost // cũng đi vào route /create nhưng phương thức khác khi vào trang create bằng phương thức get rồi thì khi tạo mới sẽ dùng đến phương thức post,
+);
+
+router.get("/edit/:id",controller.edit);
+
+router.patch(
+    "/edit/:id", 
+    upload.single("thumbnail"),
+    uploadCloud.upload,
+    validate.createPost,
+    controller.editPatch
 );
 
 module.exports=router;

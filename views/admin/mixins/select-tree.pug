@@ -1,9 +1,12 @@
 //-hàm selecttree này giúp tìm cha để sắp xếp các danh mục sản phẩm(phải có mixin thì mới đệ quy trong view/page được)
-mixin select-tree(items,level = 1)
+mixin select-tree(items,level = 1,parrent_id="")
     each item in items 
         - const prefix=Array(level + 1).join("-- ") //-(khai báo biến trong pug phải có dấu -) Array là tạo ra một mảng có (level+1) phần tử sau đó join(vd 3 phần tử sẽ có 3 khoảng trống) để tạo chuỗi prefix có level cái --
-        option(value=item.id) #{prefix}#{item.title} 
-            //-ngoài hiện thị tên ra còn hiển thị prefix
+        option(
+            value=item.id
+            selected=(item.id ==parent_id? true : false)
+            ) #{prefix}#{item.title} 
+            //-ngoài hiện thị tên ra còn hiển thị prefix(chuỗi --)
             if(item.children && item.children.length > 0) 
                 //-kiểm tra xem có con không,có thì chạy đệ quy tiếp
-                +select-tree(item.children,level + 1) 
+                +select-tree(item.children,level + 1,parent_id) 

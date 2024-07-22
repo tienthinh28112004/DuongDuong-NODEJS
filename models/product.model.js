@@ -5,6 +5,10 @@ mongoose.plugin(slug);//hàm slug để giúp làm đuôi cho trang tại client
 
 const productSchema = new mongoose.Schema({
     title: String, // sản phẩm 1
+    product_category_id:{
+        type: String,
+        default: ""
+    },
     description: String,
     price: Number,
     discountPercentage: Number,

@@ -1,10 +1,12 @@
 const Product = require("../../models/product.model");
+const ProductCategory=require("../../models/product-category.model");
 
 const systemConfig = require("../../config/system"); // nhúng file system trong config và file này
 // chú ý file pug thì có thể dùng prefixAdmin(do trong file chính có khai báo chung rồi) luôn nhưng các file js thì phải nhúng vào rồi chấm gọi thì mới dùng được
 const filterStatusHelper = require("../../helpers/filterStatus");
 const searchHelper = require("../../helpers/search");
 const paginantionHelper = require("../../helpers/pagination");
+const createTreeHelper = require("../../helpers/createTree");
 
 //[GET] /admin/products
 module.exports.index = async (req, res) => {
@@ -151,9 +153,18 @@ module.exports.deleteItem = async (req, res) => {
 };
 //[GET] /admin/products/create
 module.exports.create = async (req, res) => {
+    let find = {
+        deleted: false,
+    };
+   
+    const category = await ProductCategory.find(find).sort({position: "asc"});//tìm các cha để lựa chọn
+
+    const newCategory = createTreeHelper.tree(category);//hàm này dùng đệ quy để tìm các con cho bố(không hiểu vào helper xem lại)
+
     res.render("admin/pages/products/create", {
         //khi dùng render thì nó tự động vào views
         pageTitle: "Thêm mới sản phẩm",
+        category:newCategory
     });
 };
 //[POST] /admin/products/create
