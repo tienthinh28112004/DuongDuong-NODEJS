@@ -157,7 +157,7 @@ module.exports.create = async (req, res) => {
         deleted: false,
     };
    
-    const category = await ProductCategory.find(find).sort({position: "asc"});//tìm các cha để lựa chọn
+    const category = await ProductCategory.find(find);//tìm các cha để lựa chọn
 
     const newCategory = createTreeHelper.tree(category);//hàm này dùng đệ quy để tìm các con cho bố(không hiểu vào helper xem lại)
 
@@ -199,11 +199,17 @@ module.exports.edit = async (req, res) => {
         }
 
         const product = await Product.findOne(find); //truyền hàm find vào findOne để tìm được 1 object bản ghi(nếu chỉ dùng find thì nó sẽ trả ra 1 mảng accs object nhưng vì id chỉ có 1 nên trong mảng ấy cũng chỉ có 1 object,vẫn có thể dùng find rồi trỏ đến phần tử 0 cũng được) 
-
+       
+        const category = await ProductCategory.find({
+            deleted:false
+        });//tìm các cha để lựa chọn
+    
+        const newCategory = createTreeHelper.tree(category);//hàm này dùng đệ quy để tìm các con cho bố(không hiểu vào helper xem lại)
         res.render("admin/pages/products/edit", {
             //khi dùng render thì nó tự động vào views
             pageTitle: "Chỉnh sửa sản phẩm",
-            product: product //truyền biến product ra view
+            product: product, //truyền biến product ra view
+            category:newCategory
         });
     } catch (error) {
         req.flash("error","không tồn tại sản phẩm này");//hiện ra thông báo
