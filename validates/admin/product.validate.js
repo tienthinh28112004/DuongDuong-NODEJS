@@ -5,6 +5,5 @@ module.exports.createPost=(req,res,next)=>{//có thêm biến next để nếu t
         res.redirect("back");//ngăn cho nó chạy sang trang khác,bắt phải nhập
         return ;//nếu chưa nhập thì bắt nhập;return ở đây ngăn cho nó chạy xuống các đoạn code phía dưới ,đến khi nào nhập thì thôi
     }
-
     next();
 }

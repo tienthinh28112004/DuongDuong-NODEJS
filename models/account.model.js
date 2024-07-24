@@ -2,12 +2,12 @@ const mongoose = require("mongoose");
 const generate = require("../helpers/generate");
 
 const accountSchema = new mongoose.Schema({
-    fullname: String, 
+    fullName: String, 
     email: String,
     password: String,
     token: {
         type: String,
-        default:generate.generateRamdomString(20)
+        default:generate.generateRandomString(20)
     },// token là 1 cái string ramdom
     phone: String,
     avatar: String,
