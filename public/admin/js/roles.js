@@ -21,8 +21,6 @@ if(tablePermissions){
                     });
                 });
             }else{
-                console.log("ok2");
-
                 inputs.forEach((input,index) =>{//dùng thêm 1 biến index là chỉ số(vd chỉ số 0 là quảng trị viên,chỉ số 1 là quản lí nội dung)
                     const checked=input.checked;//nếu đã tích được vào nút thì check bằng true
                     if(checked){
@@ -45,3 +43,21 @@ if(tablePermissions){
 }
 //End permission
 
+//Permissions Data Default
+const dataRecords = document.querySelector("[data-records]");
+if(dataRecords){
+    const records = JSON.parse(dataRecords.getAttribute("data-recordes"));//chuyển từ chuỗi về 1 mảng 
+    
+    const tablePermissions = document.querySelector("[table-permissions]");//lấy ra bảng trong permission
+
+    records.forEach((record,index) =>{
+        const permissions = record.permissions;//lấy ra thuộc tính permission trong record
+        
+        permissions.forEach(permission =>{
+            const row=tablePermissions.querySelector(`[data-name="${permission}"]`);
+            const input =row.querySelectorAll("input")[index];//index biểu thị vị trí của nhóm quyền,sử dụng row để tìm ra các ô thỏa mãn nhóm quyền ấy rồi dùng index để xác nhận vị trí cần gán thêm class
+            input.checked=true;//gán cho checked bằng true tức là nó đã được chọn(chuyển xanh)
+        });
+    });
+}
+//End Permissions Data Default
