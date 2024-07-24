@@ -18,3 +18,18 @@ module.exports.createPost=(req,res,next)=>{//có thêm biến next để nếu t
     }
     next();
 }
+
+module.exports.editPatch=(req,res,next)=>{//có thêm biến next để nếu thỏa mãn thì có thể next sang bước tiếp theo tiếp theo luôn
+    if(!req.body.fullName){//check xem đã nhập tiêu đề chưa,chưa nhập bắt phải nhập (đây là validate)
+        req.flash("error","vui lòng nhập họ tên");//hiện lên thông báo
+        res.redirect("back");//ngăn cho nó chạy sang trang khác,bắt phải nhập
+        return ;//nếu chưa nhập thì bắt nhập;return ở đây ngăn cho nó chạy xuống các đoạn code phía dưới ,đến khi nào nhập thì thôi
+    }
+    if(!req.body.email){//check xem đã nhập tiêu đề chưa,chưa nhập bắt phải nhập (đây là validate)
+        req.flash("error","vui lòng nhập email");//hiện lên thông báo
+        res.redirect("back");//ngăn cho nó chạy sang trang khác,bắt phải nhập
+        return ;//nếu chưa nhập thì bắt nhập;return ở đây ngăn cho nó chạy xuống các đoạn code phía dưới ,đến khi nào nhập thì thôi
+    }
+    //nếu sửa có thể người ta khống sửa mật khẩu nên không cần check mật khẩu
+    next();
+}

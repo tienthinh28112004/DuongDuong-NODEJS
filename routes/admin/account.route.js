@@ -20,4 +20,14 @@ router.post(
     controller.createPost
 );
 
+router.get("/edit/:id",controller.edit);
+
+router.patch(
+    "/edit/:id",
+    upload.single("avatar"), //upload singe ở đây là upload 1 ảnh vào,và lưu ảnh ở trường thmbnail
+    uploadCloud.upload,//hàm upload online
+    validate.editPatch,
+    controller.editPatch
+);
+
 module.exports=router;
