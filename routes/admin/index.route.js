@@ -5,6 +5,7 @@ const productRoutes=require("./product.route");
 const productCategoryRoutes=require("./product-category.route");
 const roleRoutes=require("./role.route");
 const accountRoutes=require("./account.route");
+const authRoutes=require("./auth.route");
 
 module.exports=(app)=>{ //exports giúp code tái sử dụng ở nhiều nơi.cần truyền vào tham số app trong file DuongDuong
     const PATH_ADMIN=systemConfig.prefixAdmin;
@@ -18,5 +19,7 @@ module.exports=(app)=>{ //exports giúp code tái sử dụng ở nhiều nơi.c
     app.use(PATH_ADMIN+"/roles",roleRoutes);
 
     app.use(PATH_ADMIN+"/accounts",accountRoutes);
+
+    app.use(PATH_ADMIN+"/auth",authRoutes);
 
 }

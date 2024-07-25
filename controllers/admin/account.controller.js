@@ -86,10 +86,11 @@ module.exports.editPatch = async (req, res) => {
     const id = req.params.id;
     //req.params là cái mà mình gửi lên url còn req.body là những cái mình điền trong biểu mẫu để cập nhật
     const emailExist = await Account.findOne({ //kiểm tra xem khi sửa tài khoản có trùng email không
-        _id: { $ne :id},//hàm này giúp tìm những bản ghi có id không giống id bản ghi này(để tránh trường hợp khi sửa lại tài khoản không sửa email mà email này đã có trong database rồi nên bị lấy ra ta dùng cách này)
+        _id: { $ne :id},//hàm này giúp tìm những bản ghi có id khác id bản ghi này(để tránh trường hợp khi sửa lại tài khoản không sửa email mà email này đã có trong database rồi nên bị lấy ra => ta dùng cách này)
         email: req.body.email, //req.body là những thông tin mà người tạo tài khoản gửi lên
         deleted: false
     });
+    
     if (emailExist) {
         req.flash("error", `Email ${req.body.email} đã tồn tại`);
     } else {
