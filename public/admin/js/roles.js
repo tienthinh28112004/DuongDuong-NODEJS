@@ -46,7 +46,7 @@ if(tablePermissions){
 //Permissions Data Default
 const dataRecords = document.querySelector("[data-records]");
 if(dataRecords){
-    const records = JSON.parse(dataRecords.getAttribute("data-recordes"));//chuyển từ chuỗi về 1 mảng 
+    const records = JSON.parse(dataRecords.getAttribute("data-records"));//chuyển từ chuỗi về 1 mảng 
     
     const tablePermissions = document.querySelector("[table-permissions]");//lấy ra bảng trong permission
 

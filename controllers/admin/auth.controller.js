@@ -5,10 +5,15 @@ const systemConfig = require("../../config/system"); // nhúng file system trong
 
 //[GET]  /admin/auth/login
 module.exports.login=(req,res)=>{
-    res.render("admin/pages/auth/login",{
+    if(req.cookies.token){//nếu mà đã có token(đã đăng nhập rồi) thì nó sẽ chạy đến trang danh sách sản phẩm luôn
+        res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
+    }else{//còn nếu chưa có token thì chyaj vào trang đăng nhập
+        res.render("admin/pages/auth/login",{
         //khi dùng render thì nó tự động vào views
         pageTitle:"Trang đăng nhập"
     });
+    }
+   
 }
 
 //[POST]  /admin/auth/login
@@ -40,4 +45,12 @@ module.exports.loginPost = async (req,res) => {
     res.cookie("token",user.token);//gán 1 key token cookie rồi gán value cho nó bằng (token trong database đưa lên) user.token
     //nếu đăng nhập thành công(thỏa mãn các điều kiên bên trên)
     res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
+}
+
+//[GET]  /admin/auth/logout
+module.exports.logout = (req,res)=>{
+   //khi đăng nhập vào thì sẽ có 1 cái token lưu vào trong cookie nhờ cái token ấy mà đi đến được các trang
+   //=>vì vậy muốn đăng xuất thì chỉ cần xóa token trong cookie
+   res.clearCookie("token");//hàm xóa token trong cookie
+   res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
 }
