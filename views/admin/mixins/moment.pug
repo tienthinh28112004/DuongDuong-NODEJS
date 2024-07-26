@@ -1,0 +1,11 @@
+//-moment là giúp chuyển sang ngày tháng
+mixin formatDatetime(time)   
+    span #{moment(time).format("DD/MM/YYYY HH:mm:ss" )}
+//-hiển thị cả ngày và giờ
+mixin formatDate(time)
+    span #{moment(time).format("DD/MM/YYYY" )}
+//-hiển thị ngày
+mixin formatTime(time)
+    span #{moment(time).format("HH:mm:ss" )}
+//-hiển thị giờ
+    

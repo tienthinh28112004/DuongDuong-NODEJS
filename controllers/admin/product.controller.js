@@ -1,5 +1,6 @@
 const Product = require("../../models/product.model");
 const ProductCategory=require("../../models/product-category.model");
+const Account = require("../../models/account.model")
 
 const systemConfig = require("../../config/system"); // nhúng file system trong config và file này
 // chú ý file pug thì có thể dùng prefixAdmin(do trong file chính có khai báo chung rồi) luôn nhưng các file js thì phải nhúng vào rồi chấm gọi thì mới dùng được
@@ -54,6 +55,14 @@ module.exports.index = async (req, res) => {
 
     //End Sort
     const products = await Product.find(find).sort(sort).limit(objectPagination.limitItem).skip(objectPagination.skip); //dựa vào hàm let find(object) để tìm các giá trị phù hợp,[.limit(4) tức là chỉ lấy 4 sản phẩm đầu tiên(có thể không limit cũng được)],[ship(4) tức là bỏ qua 4 sản phẩm đầu]
+    for (const product of products) {
+        const user = await Account.findOne({
+            _id: product.createdBy.account_id
+        });
+        if(user){
+            product.accountFullName = user.fullName;
+        }
+    }
     //console.log(products);
     res.render("admin/pages/products/index", {
         //khi dùng render thì nó tự động vào views
@@ -180,15 +189,20 @@ module.exports.createPost = async (req, res) => {
     } else {
         req.body.position = parseInt(req.body.position); //nếu người ta chuyền vào thì chuyển dạng từ string sang number
     }
+
+    req.body.createdBy = {//trƯớc khi lưu vào thì thêm 1 biến createdBy vào
+        account_id: res.locals.user.id //do biến res.locals.user là biến toàn cục(không hiểu xem lại auth) nên ta chấm vào id để gán biến account_id cho nó(còn phần cretaedAt thì nó làm hàm rồi nên ko cần gán(xem lại model))
+    };
+
     // if (req.file) { // kiểm tra xem đã đưa ảnh vào chưa rồi ms chạy
-    //     req.body.thambnail = `/uploads/${req.file.filename}`; //lưu thêm link ảnh vào database;req.file.filename là id ramdom của ảnh
-    // }
+    //     req.body.thambnail = `/uploads/${req.file.filename}`; //lưu thêm link ảnh vào database;req.file.filename là id ramdom của ảnh}
+    
     const product = new Product(req.body); // đây là cú pháp tạo mới 1 sản phẩm sao lưu key value của object req.body đã nhập vào sang 1 product mới
     await product.save(); //lưu dữ liệu product vừa tạo ra vào database
 
     res.redirect(`${systemConfig.prefixAdmin}/products`); // sau khi xong chạy đến trang nào cũng được,ở đây chạy đến tráng ản phẩm /admin/product
 };
-//[GET] /admin/products/create
+//[GET] /admin/products/edit/:id
 module.exports.edit = async (req, res) => {
     //console.log(req)//là cái người dùng nhập vào,req.query là nhwungx cái sau dấu ?; còn req.param là 1 object những cái thuộc tính của vật được chọn để thay đổi
     // console.log(req.params.id) //lấy ra id của sản phẩm

@@ -5,6 +5,7 @@ const bodyParser=require("body-parser");
 const cookieParser=require("cookie-parser");
 const session=require("express-session");
 const flash=require("express-flash");//thư viện hiển thị thông báo cho bên forntend
+const moment = require("moment");//thư viện có tác dụng chuyển ngày tháng trong javascript
 require("dotenv").config();// nhúng thư viện dotevn vào file
 
 const database= require("./config/database");
@@ -42,6 +43,8 @@ app.use(
 // App Locals Variable
 app.locals.prefixAdmin = systemConfig.prefixAdmin;// gán giá trị cố định để có thể sử dụng /admin ở nhiều nơi(từ file js không thể đi được vào file pug nên phải dùng cách này)
 //prefixadmin lúc này có thể tồn tại trong bất kì file pug nào,app.local có thể tạo ra các biến toàn cục
+app.locals.moment = moment;//chuyển sang biến toàn cục
+
 app.use(express.static(`${__dirname}/public`));// dòng này là để có thể sử dụng được file tĩnh Public chỉ sử dụng được trong các file pug,__dirname chính là cấu trcus thư mục của chúng ta luôn,deloy onl thfi cầng có dirname
 
 //Route
