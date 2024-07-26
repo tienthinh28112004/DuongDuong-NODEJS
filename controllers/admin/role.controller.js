@@ -86,7 +86,6 @@ module.exports.permissions= async (req,res)=>{
     });
 };
 
-
 //[PATCH]  /admin/roles/permissions
 module.exports.permissionsPatch= async (req,res)=>{
     //gửi bất cứ cái gì qua form thì đều lấy được qua req.body

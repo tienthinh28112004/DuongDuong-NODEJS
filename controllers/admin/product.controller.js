@@ -27,7 +27,7 @@ module.exports.index = async (req, res) => {
     //Tìm kiếm
     const objectSearch = searchHelper(req.query)
 
-    if (objectSearch.regex) {
+    if (objectSearch.regex) {//hàm regex giúp khi tìm kiếm nó sẽ giúp ra cả nhwungx cái khác có từu khóa tương tự 
         find.title = objectSearch.regex;
     }
     //end tìm kiếm
@@ -66,7 +66,7 @@ module.exports.index = async (req, res) => {
     //console.log(products);
     res.render("admin/pages/products/index", {
         //khi dùng render thì nó tự động vào views
-        pageTitle: "Danh sach san pham",
+        pageTitle: "Danh sách sản phẩm",
         products: products, //truyền product vào file admin/pages/products/index
         filterStatus: filterStatus,
         keyword: objectSearch.keyword,
@@ -124,8 +124,12 @@ module.exports.changeMulti = async (req, res) => {
                     }
                 }, // id như là 1 cái tên để biết đang thay đổi sản phẩm nào,bắt buộc phải có id
                 {
-                    deleted: true,
-                    deletedAt: new Date()
+                    // deleted: true,
+                    // deletedAt: new Date()
+                    deletedBy: {
+                        account_id: res.locals.user.id,//khi đăng nhập thì res.locals.user là biến toàn cục,từ đấy chấm vào id sẽ ra được id(này chỉ lưu id chứ không cần chỉ rõ như tên như người tạo)
+                        deletedAt: new Date(),
+                    }
                 }
             );
             req.flash("success", `Xóa thành công ${ids.length} sản phẩm`);
@@ -156,7 +160,11 @@ module.exports.deleteItem = async (req, res) => {
         _id: id
     }, {
         deleted: true,
-        deletedAt: new Date() //new Date() là hàm trong javascript giúp cập nhập thời gian hiện tại
+        //deletedAt: new Date() //new Date() là hàm trong javascript giúp cập nhập thời gian hiện tại
+        deletedBy: {
+            account_id: res.locals.user.id,//khi đăng nhập thì res.locals.user là biến toàn cục,từ đấy chấm vào id sẽ ra được id(này chỉ lưu id chứ không cần chỉ rõ như tên như người tạo)
+            deletedAt: new Date(),
+        }
     }); //(xóa mềm) truy cập vào item qua id của nó,sau đó sửa thuộc tính deleted của nó sang true,lúc này nếu lọc sẽ không lọc được cái anyf do nó đã chuyển sang true =>xóa mềm(không mất item trong database)
     res.redirect("back");
 };
