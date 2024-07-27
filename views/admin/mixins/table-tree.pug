@@ -1,5 +1,5 @@
 mixin table-tree(items,level = 1)
-    each item, index in items
+    each item in items
         - const prefix = Array(level + 1).join("-- ") 
         tr 
             td 

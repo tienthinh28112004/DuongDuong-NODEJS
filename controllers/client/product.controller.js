@@ -1,5 +1,7 @@
 const Product=require("../../models/product.model")
 
+const productsHelper = require("../../helpers/products")
+
 //[GET] /products
 module.exports.index = async(req,res) => {
 
@@ -9,11 +11,7 @@ module.exports.index = async(req,res) => {
     }).sort({position: "desc" });//có hàm sort dùng để sắp xếp vị trí(sắp xếp giảm dần là desc còn sắp xếp tăng dần là asc),ở đây là sắp xếp theo position(vị trí)
    
     
-    const newProducts=products.map(item=>{
-        item.priceNew=(item.price*(100-item.discountPercentage)/100).toFixed(0);
-        return item;
-        //item.pricenew ở đây không cần khai báo vì JavaScript cho phép bạn thêm thuộc tính mới vào các đối tượng mà không cần khai báo trước.
-    });
+    const newProducts= productsHelper.priceNewProducts(products);
     res.render("client/pages/products/index",{
         pageTitle: "danh sach san pham",
         products: newProducts

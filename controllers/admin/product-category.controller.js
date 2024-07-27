@@ -39,16 +39,23 @@ module.exports.create = async (req, res) => {
 
 //[POST] /admin/products-category/create
 module.exports.createPost = async (req, res) => {
-    if (req.body.position == "") { // nếu người ta không nhập gì vào position thì tự động cho nó bằng length+1
-        const count = await ProductCategory.countDocuments();//hàm countDocument giúp đếm số lượng phần tử trong database nhanh nhất
-        req.body.position = count + 1;
-    } else {
-        req.body.position = parseInt(req.body.position); //nếu người ta chuyền vào thì chuyển dạng từ string sang number
-    }
-    const record = new ProductCategory(req.body); // đây là cú pháp tạo mới 1 sản phẩm sao lưu key value của object req.body đã nhập vào sang 1 product mới
-    await record.save(); //lưu dữ vừa tạo ra vào lại database
+    const permissions = res.locals.role.permissions;
 
-    res.redirect(`${systemConfig.prefixAdmin}/products-category`); // sau khi xong chạy đến trang khác
+    if(permissions.includes("products-category_create")){//phải cho vào ngoặc để tránh trường hợp ngta biết link rồi dùng postman vào xóa
+        if (req.body.position == "") { // nếu người ta không nhập gì vào position thì tự động cho nó bằng length+1
+            const count = await ProductCategory.countDocuments();//hàm countDocument giúp đếm số lượng phần tử trong database nhanh nhất
+            req.body.position = count + 1;
+        } else {
+            req.body.position = parseInt(req.body.position); //nếu người ta chuyền vào thì chuyển dạng từ string sang number
+        }
+        const record = new ProductCategory(req.body); // đây là cú pháp tạo mới 1 sản phẩm sao lưu key value của object req.body đã nhập vào sang 1 product mới
+        await record.save(); //lưu dữ vừa tạo ra vào lại database
+    
+        res.redirect(`${systemConfig.prefixAdmin}/products-category`); // sau khi xong chạy đến trang khác
+    }else{
+        res.send("403");
+        return ;
+    }
 }
 
 //[GET] /admin/products-category/edit/:id(lấy dữ liệu để trả ra trang)
