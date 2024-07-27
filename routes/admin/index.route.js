@@ -8,6 +8,8 @@ const productCategoryRoutes=require("./product-category.route");
 const roleRoutes=require("./role.route");
 const accountRoutes=require("./account.route");
 const authRoutes=require("./auth.route");
+const myAccountRoutes=require("./my-account.route");
+
 //add authMiddleware.requireAuth vào để có thể check xem token đã thỏa mãn chưa
 module.exports=(app)=>{ //exports giúp code tái sử dụng ở nhiều nơi.cần truyền vào tham số app trong file DuongDuong
     const PATH_ADMIN=systemConfig.prefixAdmin;
@@ -23,5 +25,7 @@ module.exports=(app)=>{ //exports giúp code tái sử dụng ở nhiều nơi.c
     app.use(PATH_ADMIN+"/accounts",authMiddleware.requireAuth,accountRoutes);
 
     app.use(PATH_ADMIN+"/auth",authRoutes);
+
+    app.use(PATH_ADMIN+"/my-account",authMiddleware.requireAuth,myAccountRoutes);
 
 }

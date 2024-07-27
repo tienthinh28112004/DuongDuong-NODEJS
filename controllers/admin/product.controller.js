@@ -56,12 +56,23 @@ module.exports.index = async (req, res) => {
     //End Sort
     const products = await Product.find(find).sort(sort).limit(objectPagination.limitItem).skip(objectPagination.skip); //dựa vào hàm let find(object) để tìm các giá trị phù hợp,[.limit(4) tức là chỉ lấy 4 sản phẩm đầu tiên(có thể không limit cũng được)],[ship(4) tức là bỏ qua 4 sản phẩm đầu]
     for (const product of products) {
+        //lấy ra thông tin người tạo
         const user = await Account.findOne({
             _id: product.createdBy.account_id
         });
         if(user){
             product.accountFullName = user.fullName;
         }
+        //lấy ra thông tin người cập nhật gần nhất
+        const updatedBy = product.updatedBy.slice(-1)[0];//(slice(-1) lấy ra 1 mảng phần tử rồi chấm vào 0 để lấy phần tửu cuối cùng cũng được)lấy ra phần tử cuối cùng trong mảng updatedBy(thông tin của người đăng nhập vào gần nhất)(có thể dùng cách product.updatedBy.length - 1 để lấy ra chỉ số cũng được)
+        if(updatedBy){//những bản ghi cũ không chưa có update nên phải để trong if không sẽ dễ bị lỗi chương trình
+            const userUpdated = await Account.findOne({
+                _id: updatedBy.account_id, //tìm kiếm user có id giống với id của phần tửu cuối cùng trong mảng(người chỉnh sủa sau cùng)=>tìm ra thằng sửa sau cùng
+            });
+
+            updatedBy.accountFullName = userUpdated.fullName;//gán thêm cho updatedBy thêm 1 key là countFullName và value là tên cửa người đăng nhập
+        }
+        
     }
     //console.log(products);
     res.render("admin/pages/products/index", {
@@ -79,11 +90,17 @@ module.exports.changeStatus = async (req, res) => {
     //req.query là lấy sau dấu ?
     const status = req.params.status;
     const id = req.params.id;
+    const updatedBy = {//phải tạo object để khi push vào mảng các object khác không bị mất dữ liệu
+        account_id: res.locals.user.id,//gán account_id bằng id của người update
+        updateAt: new Date(),//gán biến thời gian
+    }
 
     await Product.updateOne({
         _id: id
     }, {
-        status: status
+        status: status,
+        $push : { updatedBy: updatedBy},//hàm $push là ahmf có sẵn trong mongoose nó giúp push tất cả các phần tử của object updatedBy vào trong updateBy trong model(mongosedb) mà không bị mất dữ liệu trước đã lưu 
+
     }); //update 1 sản phẩm,id là id sản phẩm muốn update,cập nhật trường status=status(id là bắt buộc còn thuộc tính có thể bất kì)
 
     req.flash("success", "cập nhật trạng thái thành công!"); //khi thay đổi trạng thái mà muốn điền thống báo cho người dùng biết thì dùng hàm flash,cái đầu tiên là tiêu đề còn có thể là key,cái sau là nội dung thông báo,
@@ -95,6 +112,10 @@ module.exports.changeMulti = async (req, res) => {
     const type = req.body.type;
     const ids = req.body.ids.split(", "); //chuyển từ xâu về mảng
 
+    const updatedBy = {//phải tạo object để khi push vào mảng các object khác không bị mất dữ liệu
+        account_id: res.locals.user.id,//gán account_id bằng id của người update
+        updatedAt: new Date(),//gán biến thời gian
+    }
     switch (type) {
         case "active":
             await Product.updateMany({
@@ -102,7 +123,8 @@ module.exports.changeMulti = async (req, res) => {
                     $in: ids
                 }
             }, {
-                status: "active"
+                status: "active",
+                $push : { updatedBy: updatedBy},//hàm $push là ahmf có sẵn trong mongoose nó giúp push tất cả các phần tử của object updatedBy vào trong updateBy trong model(mongosedb) mà không bị mất dữ liệu trước đã lưu 
             }); // update nhiều id,ids ở đây là mảng,biến status thành active
             req.flash("success", `Cập nhập trạng thái thành công của ${ids.length} sản phẩm`);
             break;
@@ -112,7 +134,8 @@ module.exports.changeMulti = async (req, res) => {
                     $in: ids
                 }
             }, {
-                status: "inactive"
+                status: "inactive",
+                $push : { updatedBy: updatedBy},//hàm $push là ahmf có sẵn trong mongoose nó giúp push tất cả các phần tử của object updatedBy vào trong updateBy trong model(mongosedb) mà không bị mất dữ liệu trước đã lưu 
             }); // update nhiều id,biến status thành inactive
             req.flash("success", `Cập nhập trạng thái thành công của ${ids.length} sản phẩm`);
             break;
@@ -142,7 +165,8 @@ module.exports.changeMulti = async (req, res) => {
                 await Product.updateOne({
                     _id: id
                 }, {
-                    position: position //do mỗi id lại có 1 position khác nhau nên phải để trong hàm for để nó có thể duyệt hết các phần tử
+                    position: position, //do mỗi id lại có 1 position khác nhau nên phải để trong hàm for để nó có thể duyệt hết các phần tử
+                    $push : { updatedBy: updatedBy},//hàm $push là ahmf có sẵn trong mongoose nó giúp push tất cả các phần tử của object updatedBy vào trong updateBy trong model(mongosedb) mà không bị mất dữ liệu trước đã lưu 
                 });
             }
             break;
@@ -252,8 +276,17 @@ module.exports.editPatch = async (req, res) => {//tương tự creatPost nên kh
     //     req.body.thambnail = `/uploads/${req.file.filename}`; //đường dẫn local lưu thêm link ảnh vào database;req.file.filename là id ramdom của ảnh
     // }
     try {
-        await Product.updateOne({id:id},req.body);//ở đây update tất cả req.body
-        req.flash("error","Cập nhật thành công");
+        const updatedBy = {//phải tạo object để khi push vào mảng các object khác không bị mất dữ liệu
+            account_id: res.locals.user.id,//gán account_id bằng id của người update
+            updatedAt: new Date(),//gán biến thời gian
+        }
+
+        //req.body.updatedBy = updatedBy;//dùng cách như anyf thì nó chủ push 1 phần tử vào trong database 1 lượt thôi(không lưu được số lượt sửa wed) nên phải dùng cách khác
+        await Product.updateOne( { _id : id} ,{
+            ...req.body,//lấy ra tất cả phần tử trong req.body
+            $push : { updatedBy: updatedBy},//hàm $push là ahmf có sẵn trong mongoose nó giúp push tất cả các phần tử của object updatedBy vào trong updateBy trong model(mongosedb) mà không bị mất dữ liệu trước đã lưu 
+        });
+        req.flash("success","Cập nhật thành công");
     } catch (error) {
         req.false("erorr","Cập nhật thất bại")
     }
