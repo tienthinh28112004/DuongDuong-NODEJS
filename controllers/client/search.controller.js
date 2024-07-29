@@ -8,7 +8,7 @@ module.exports.index = async(req,res)=>{
 
     let newProducts = [];//khai báo mảng ở đây để tránh khi vào if ms khai báo thì render không nhận được
     if(keyword){//kiểm tra có keyword không rồi mới chạy tiếp
-        const regex =  new RegExp(keyword,"i");//trả ra các giá trị liên quan đến giá trị keyword,từ i để không phân biệt hoa thường
+        const regex =  new RegExp(keyword, "i");//trả ra các giá trị liên quan đến giá trị keyword,từ i để không phân biệt hoa thường
         const products = await Product.find({
             title: regex,//tìm các sản phẩm có title giống regex (gần giống hoặc giống keyword)
             deleted: false,
