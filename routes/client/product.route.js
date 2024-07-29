@@ -5,6 +5,8 @@ const controller=require("../../controllers/client/product.controller");
 
 router.get("/",controller.index);
 
-router.get("/:slug",controller.detail);//truyền động slug
+router.get("/:slugCategory",controller.category);//truyền động slug
+
+router.get("/detail/:slugProduct",controller.detail);//truyền động slug
 
 module.exports=router;

@@ -146,6 +146,7 @@ module.exports.changeMulti = async (req, res) => {
                         $in: ids
                     }
                 }, // id như là 1 cái tên để biết đang thay đổi sản phẩm nào,bắt buộc phải có id
+                {deleted: true},
                 {
                     // deleted: true,
                     // deletedAt: new Date()
@@ -158,8 +159,9 @@ module.exports.changeMulti = async (req, res) => {
             req.flash("success", `Xóa thành công ${ids.length} sản phẩm`);
             break;
         case "change-position":
+            req.flash("success","Cập nhật vị trí thành công");
             for (const item of ids) {
-                let [id, position] = item.split("-"); //sử dụng destrutering:phá vỡ cấu trúc,do item ở đây là dạng id-position nên dùng spilt để tách chuỗi ra mảng,rồi dùng phá vỡ cấu trúc để lấy
+                let [id, position] = item.split("- "); //sử dụng destrutering:phá vỡ cấu trúc,do item ở đây là dạng id-position nên dùng spilt để tách chuỗi ra mảng,rồi dùng phá vỡ cấu trúc để lấy
                 position = parseInt(position); //do position trong module là dạng number nên phải đổi dạng cho nó từ string sang number
 
                 await Product.updateOne({
@@ -169,6 +171,7 @@ module.exports.changeMulti = async (req, res) => {
                     $push : { updatedBy: updatedBy},//hàm $push là ahmf có sẵn trong mongoose nó giúp push tất cả các phần tử của object updatedBy vào trong updateBy trong model(mongosedb) mà không bị mất dữ liệu trước đã lưu 
                 });
             }
+            req.flash("success","Cập nhật vị trí thành công");
             break;
         default:
             break;
