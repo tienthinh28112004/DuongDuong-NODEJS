@@ -47,7 +47,7 @@ module.exports.addPost = async (req, res) => {
 
     if (existProductInCart) {
         const quantityNew = quantity + existProductInCart.quantity;
-        //hàm update lại biến
+        //hàm update lại biến (stackoverflow)
         await Cart.updateOne({
             _id: cartId,
             "products.product_id": productId
@@ -67,7 +67,7 @@ module.exports.addPost = async (req, res) => {
         await Cart.updateOne({
             _id: cartId
         }, {
-            $push: {
+            $push: {//add thêm sản phẩm vào thì sử dụng phương thức push
                 products: objectCart
             } //cập nhật 1 object mới cho product trong model(cập nhật sản phẩm mới vào trong giỏ hàng(thông qua id))
         });
@@ -75,6 +75,22 @@ module.exports.addPost = async (req, res) => {
     }
 
     req.flash("success", "Đã thêm sản phẩm vào giỏ hàng");
+
+    res.redirect("back");
+}
+
+//[GET] /cart/delete/:productId
+module.exports.delete = async (req, res) => {
+    const cartId = req.cookies.cartId;
+    const productId = req.params.productId;
+    //hàm xóa 1 sản phẩm trong products thông qua id của cart
+    await Cart.updateOne({
+        _id: cartId
+    }, {
+        $pull: {products: { product_id : productId } }//hàm xóa bản ghi(thông qua cartid truy caaph vào product sau đó tìm đến bản ghi có id giống với productId để xóa)
+    });
+    //hết hàm xóa sản phẩm
+    req.flash("success","Đã xóa sản phầm khỏi giỏ hàng");
 
     res.redirect("back");
 }
