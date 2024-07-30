@@ -9,6 +9,6 @@ module.exports.category = async(req,res,next) =>{
 
     const newProductsCategory = createTreeHelper.tree(productsCategory);//hàm này dùng đệ quy để tìm các con cho bố(không hiểu vào helper xem lại)
 
-    res.locals.layoutProductsCategory = newProductsCategory;
+    res.locals.layoutProductsCategory = newProductsCategory;//tạo ra biến toàn cục
     next();
 }

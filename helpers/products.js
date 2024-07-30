@@ -12,5 +12,5 @@ module.exports.priceNewProduct = (product) =>{
     //tính cho 1 sản phẩm
     const priceNew = ((product.price * (100 - product.discountPercentage))/100).toFixed(0);
     
-    return priceNew;
+    return parseInt(priceNew);
 }

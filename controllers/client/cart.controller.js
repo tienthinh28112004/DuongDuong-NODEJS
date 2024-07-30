@@ -1,4 +1,37 @@
 const Cart = require("../../models/cart.model");
+const Product = require("../../models/product.model");
+
+const productsHelper = require("../../helpers/products");
+
+//[GET] /Cart/
+module.exports.index = async (req,res) => {
+    const cartId = req.cookies.cartId;
+
+    const cart = await Cart.findOne({
+        _id: cartId
+    });
+
+    if(cart.products.length > 0){//kiểm tra xem có sản phẩm nào trong giỏ hàng không
+        for (const item of cart.products) {//nếu có lọc qua từng sản phẩm trong giỏ hàng
+            const productId = item.product_id;//gán biến productId bằng id của hàng hóa
+            const productInfo = await Product.findOne({//lọc qua Product lấy sản phẩm có id giống với id lấy được
+                _id: productId,
+            }).select("title thumbnail slug price discountPercentage");//lấy ra tiêu đề hình ảnh slug giá cũ,% giảm giá
+            
+            productInfo.priceNew = productsHelper.priceNewProduct(productInfo);//gán thêm cho product 1 key là pricenew rồi sử dụng helper để tính giá mới
+            
+            item.productInfo = productInfo;//gán thêm 1 key productInfo cho item
+        
+            item.totalPrice = productInfo.priceNew * item.quantity;//tổng tiền của sản phẩm
+        }
+    }
+
+    cart.totalPrice = cart.products.reduce((sum, item) => sum + item.totalPrice,0);//tổng tiền của toàn bộ giỏ hàng
+    res.render("client/pages/cart/index", {
+        pageTitle: "Giỏ hàng",
+        cartDetail: cart
+    });
+}
 
 //[POST] /cart/add/:productId
 module.exports.addPost = async (req, res) => {
