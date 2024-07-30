@@ -5,6 +5,7 @@ const homeRoutes = require("./home.route");
 const productRoutes = require("./product.route");
 const searchRoutes = require("./search.route");
 const cartRoutes = require("./cart.route");
+const checkoutRoutes = require("./checkout.route");
 
 module.exports = (app) => { //exports giúp code tái sử dụng ở nhiều nơi.cần truyền vào tham số app trong file DuongDuong
     app.use(categoryMiddleware.category);//(gần như trang nào cũng sử dụng nên đưa lên đây)mục đích sử dụng middleware ở đây là hợp thức hóa việc có biến res.locals.productscategory,từ đó đi được vào header(phần trên menu) để trả ra giao diện sản phẩm đẹp
@@ -18,5 +19,7 @@ module.exports = (app) => { //exports giúp code tái sử dụng ở nhiều n�
     app.use("/search", searchRoutes);
 
     app.use("/cart", cartRoutes);
+    
+    app.use("/checkout", checkoutRoutes);
 
 }
