@@ -94,3 +94,26 @@ module.exports.delete = async (req, res) => {
 
     res.redirect("back");
 }
+
+//[GET] /cart/update/:productId/:quantity
+module.exports.update = async (req, res) => {//không hiểu vào filr cart.js trong pulic xem lại
+    const cartId = req.cookies.cartId;
+    const productId = req.params.productId;//forntend gửi lên sản phẩm cần cập nhật
+    const quantity = req.params.quantity;//số lượng cần cập nhật
+
+     //hàm update lại biến (stackoverflow)
+     await Cart.updateOne({
+        _id: cartId,
+        "products.product_id": productId//vào giỏ hàng có id bản ghi là cartId rồi vào sản phẩm so id như productId
+    },{
+        $set: {
+            "products.$.quantity":quantity //update lại biến products.quantity(vào products rồi chỏ đến biến quntity update lại biến)
+        }
+    }
+    );
+    //hàm hết update lại biến
+
+    req.flash("success","Cập nhật thành công");
+
+    res.redirect("back");
+}
