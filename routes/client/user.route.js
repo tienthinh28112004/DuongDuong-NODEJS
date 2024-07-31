@@ -10,6 +10,12 @@ router.post("/register",validate.registerPost,controller.registerPost);//validat
 
 router.get("/login",controller.login);
 
-router.post("/register",validate.loginPost,controller.loginPost);//validate đảm bảo người nhập phải nhập thông tin
+router.post("/login",validate.loginPost,controller.loginPost);//validate đảm bảo người nhập phải nhập thông tin
+
+router.get("/logout",controller.logout);
+
+router.get("/password/forgot",controller.forgotPassword);
+
+router.post("/password/forgot",validate.forgotPasswordPost,controller.forgotPasswordPost);
 
 module.exports = router;

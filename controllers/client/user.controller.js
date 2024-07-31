@@ -1,5 +1,8 @@
 const md5 = require("md5");
 const User = require("../../models/user.model");
+const ForgotPassword = require("../../models/forgot-password.model");
+
+const generateHelper = require("../../helpers/generate");
 
 // [GET] /user/register
 module.exports.register = async (req, res) => {
@@ -63,3 +66,47 @@ module.exports.loginPost = async (req, res) => {
 
     res.redirect("/");
 }
+
+// [GET] /user/logout
+module.exports.logout = async (req, res) => {
+   res.clearCookie("tokenUser");//xóa đi biến tokenUser trong cookie là đăng xuất
+   res.redirect("/");
+}
+
+// [GET] /user/password/forgot
+module.exports.forgotPassword = async (req, res) => {
+    res.render("client/pages/user/forgot-password",{
+        pageTitle: "Lấy lại mật khẩu"
+    });
+}
+ 
+// [POST] /user/password/forgot
+module.exports.forgotPasswordPost = async (req, res) => {
+    const email = req.body.email;
+
+    const user = await user.findOne({
+        email: email,//tìm kiếm xem trong user có bản ghi anof có email giống email người ta nhập không
+        deleted: false
+    });
+
+    if(!user){
+        res.flash("error","Email không tồn tại!");
+        res.redirect("back");
+        return ;
+    }
+    //lưu thông tin cần thiết để lấy lại mật khẩu vào database
+    const otp = generateHelper.generateRandomNumber(6);//lấy ramdom 6 số
+    
+    const objectForgotPassword = {
+        email: email,
+        otp: otp,
+        expireAt: Date.now()//nếu chỉ để nhưu anyf thì nó sẽ lấy theo trong model
+    };
+
+    const forgotPassword = new ForgotPassword(objectForgotPassword);//lưa lại vào trong database
+    await forgotPassword.save();
+    //Nếu tồn tại email này thì chúng ta sẽ gửi mã OTP qua email
+
+
+}
+ 
